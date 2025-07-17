@@ -16,11 +16,20 @@ namespace CanvasQuizConverter.Cli
     public static class Program
     {
         [STAThread]
-        public static async Task Main()
+        public static void Main()
+        {
+            MainAsync().GetAwaiter().GetResult();
+        }
+
+        private static async Task MainAsync()
         {
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+
+            using var dummyForm = new Form { ShowInTaskbar = false, WindowState = FormWindowState.Minimized, Opacity = 0 };
+            dummyForm.Load += (s, e) => dummyForm.Hide();
+            dummyForm.Show();
 
             using var openFileDialog = new OpenFileDialog
             {
@@ -29,10 +38,12 @@ namespace CanvasQuizConverter.Cli
                 Multiselect = true
             };
 
-            if (openFileDialog.ShowDialog() != DialogResult.OK)
+            if (openFileDialog.ShowDialog(dummyForm) != DialogResult.OK)
             {
+                dummyForm.Close();
                 return;
             }
+            dummyForm.Close();
 
             var exportDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "QTI_Exports");
             Directory.CreateDirectory(exportDir);
