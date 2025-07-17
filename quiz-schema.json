@@ -1,0 +1,109 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Canvas Quiz QTI Generator Schema",
+  "description": "Defines the structure for a quiz JSON file to be converted into a Canvas QTI package.",
+  "type": "object",
+  "required": [
+    "quizTitle",
+    "quizId"
+  ],
+  "properties": {
+    "quizTitle": {
+      "description": "The main title of the quiz, which will be visible in Canvas.",
+      "type": "string",
+      "minLength": 1
+    },
+    "quizId": {
+      "description": "A unique identifier for the quiz, used for generating filenames and internal IDs. Should be URL-friendly (e.g., 'intro-to-calculus-quiz').",
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9-]+$"
+    },
+    "multipleChoiceQuestions": {
+      "description": "An array containing all the multiple-choice questions for the quiz.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "points",
+          "questionText",
+          "answers"
+        ],
+        "properties": {
+          "id": {
+            "description": "A unique identifier for this specific question.",
+            "type": "string",
+            "minLength": 1
+          },
+          "points": {
+            "description": "The point value for this question.",
+            "type": "number",
+            "minimum": 0
+          },
+          "questionText": {
+            "description": "The full text of the question prompt.",
+            "type": "string",
+            "minLength": 1
+          },
+          "answers": {
+            "description": "An array of possible answers. Exactly one answer must be marked as correct.",
+            "type": "array",
+            "minItems": 2,
+            "items": {
+              "type": "object",
+              "required": [
+                "text",
+                "isCorrect"
+              ],
+              "properties": {
+                "text": {
+                  "description": "The text for this answer option.",
+                  "type": "string",
+                  "minLength": 1
+                },
+                "isCorrect": {
+                  "description": "Set to true for the correct answer, false for all others.",
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "freeResponseQuestions": {
+      "description": "An array containing all the free-response (essay) questions for the quiz.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "points",
+          "questionText",
+          "modelAnswer"
+        ],
+        "properties": {
+          "id": {
+            "description": "A unique identifier for this specific question.",
+            "type": "string",
+            "minLength": 1
+          },
+          "points": {
+            "description": "The point value for this question.",
+            "type": "number",
+            "minimum": 0
+          },
+          "questionText": {
+            "description": "The full text of the question prompt.",
+            "type": "string",
+            "minLength": 1
+          },
+          "modelAnswer": {
+            "description": "A model answer for instructor reference. This is not used for auto-grading.",
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
