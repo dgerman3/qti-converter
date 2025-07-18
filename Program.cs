@@ -27,7 +27,8 @@ namespace CanvasQuizConverter.Cli
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            using var dummyForm = new Form { ShowInTaskbar = false, WindowState = FormWindowState.Minimized, Opacity = 0 };
+            using var dummyForm = new Form
+                { ShowInTaskbar = false, WindowState = FormWindowState.Minimized, Opacity = 0 };
             dummyForm.Load += (s, e) => dummyForm.Hide();
             dummyForm.Show();
 
@@ -43,6 +44,7 @@ namespace CanvasQuizConverter.Cli
                 dummyForm.Close();
                 return;
             }
+
             dummyForm.Close();
 
             var exportDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "QTI_Exports");
@@ -60,6 +62,7 @@ namespace CanvasQuizConverter.Cli
             {
                 Console.WriteLine(message);
             }
+
             Console.WriteLine("Press any key to exit.");
             Console.ReadKey();
         }
@@ -72,25 +75,30 @@ namespace CanvasQuizConverter.Cli
             try
             {
                 var jsonContent = File.ReadAllTextAsync(filePath).Result;
-                var schemaJson =  File.ReadAllTextAsync("quiz-schema.json").Result;
+                var schemaJson = File.ReadAllTextAsync("quiz-schema.json").Result;
                 var schema = JsonSchema.FromText(schemaJson);
-                var validationResult = schema.Evaluate(JsonDocument.Parse(jsonContent).RootElement, new EvaluationOptions { OutputFormat = OutputFormat.List });
+                var validationResult = schema.Evaluate(JsonDocument.Parse(jsonContent).RootElement,
+                    new EvaluationOptions { OutputFormat = OutputFormat.List });
 
                 if (!validationResult.IsValid)
                 {
-                    var errorMessages = validationResult.Details.Where(d => d.HasErrors).SelectMany(d => d.Errors!.Select(e => $"'{d.InstanceLocation}': {e.Value}")).ToList();
+                    var errorMessages = validationResult.Details.Where(d => d.HasErrors)
+                        .SelectMany(d => d.Errors!.Select(e => $"'{d.InstanceLocation}': {e.Value}")).ToList();
                     LogError(fileName, "Schema validation failed.", summary, errorMessages);
                     return;
                 }
+
                 LogSuccess(fileName, "Validated against schema.", summary);
 
-                var quiz = JsonSerializer.Deserialize<Quiz>(jsonContent, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                var quiz = JsonSerializer.Deserialize<Quiz>(jsonContent,
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
                 if (quiz.MultipleChoiceQuestions.Any(q => q.Answers.Count(a => a.IsCorrect) != 1))
                 {
                     LogError(fileName, "Each multiple-choice question must have exactly one correct answer.", summary);
                     return;
                 }
+
                 LogSuccess(fileName, "Logical validation passed.", summary);
 
                 var zipPath = Path.Combine(exportDir, $"{quiz.QuizId}.zip");
@@ -102,7 +110,8 @@ namespace CanvasQuizConverter.Cli
                 var resourceIdentifiers = new Dictionary<string, string>();
                 var dependencyIdentifiers = new List<string>();
 
-                var allQuestions = quiz.MultipleChoiceQuestions.Select(q => (object)q).Concat(quiz.FreeResponseQuestions.Select(q => (object)q)).ToList();
+                var allQuestions = quiz.MultipleChoiceQuestions.Select(q => (object)q)
+                    .Concat(quiz.FreeResponseQuestions.Select(q => (object)q)).ToList();
 
                 foreach (var question in allQuestions)
                 {
@@ -123,16 +132,19 @@ namespace CanvasQuizConverter.Cli
 
                     resourceIdentifiers.Add(questionId, resourceId);
                     dependencyIdentifiers.Add(resourceId);
-                     AddEntryToZip(archive, $"{resourceId}/{questionId}.xml", qtiXml);
+                    AddEntryToZip(archive, $"{resourceId}/{questionId}.xml", qtiXml);
                 }
 
-                var assessmentXml = XmlGenerator.GenerateAssessmentQti(quiz.QuizTitle, assessmentIdentifier, resourceIdentifiers.Keys.ToList());
-                 AddEntryToZip(archive, $"{assessmentIdentifier}/{assessmentIdentifier}.xml", assessmentXml);
+                var assessmentXml = XmlGenerator.GenerateAssessmentQti(quiz.QuizTitle, assessmentIdentifier,
+                    resourceIdentifiers.Keys.ToList());
+                AddEntryToZip(archive, $"{assessmentIdentifier}/{assessmentIdentifier}.xml", assessmentXml);
 
-                var manifestXml = XmlGenerator.GenerateImsManifest(manifestIdentifier, assessmentIdentifier, dependencyIdentifiers, resourceIdentifiers);
-                 AddEntryToZip(archive, "imsmanifest.xml", manifestXml);
+                var manifestXml = XmlGenerator.GenerateImsManifest(manifestIdentifier, assessmentIdentifier,
+                    dependencyIdentifiers, resourceIdentifiers);
+                AddEntryToZip(archive, "imsmanifest.xml", manifestXml);
 
-                LogSuccess(fileName, $"Generated '{Path.GetFileName(zipPath)}' with {allQuestions.Count} questions.", summary);
+                LogSuccess(fileName, $"Generated '{Path.GetFileName(zipPath)}' with {allQuestions.Count} questions.",
+                    summary);
             }
             catch (Exception ex)
             {
@@ -160,7 +172,8 @@ namespace CanvasQuizConverter.Cli
             summary.Add($"SUCCESS ({fileName}): {message}");
         }
 
-        private static void LogError(string fileName, string message, ICollection<string> summary, List<string> details = null)
+        private static void LogError(string fileName, string message, ICollection<string> summary,
+            List<string> details = null)
         {
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine($"ERROR in '{fileName}': {message}");
@@ -171,6 +184,7 @@ namespace CanvasQuizConverter.Cli
                     Console.WriteLine($"	{detail}");
                 }
             }
+
             Console.ResetColor();
             summary.Add($"ERROR ({fileName}): {message}");
         }

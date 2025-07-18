@@ -13,7 +13,8 @@ namespace CanvasQuizConverter.Generators
         public static string GenerateQuestionItemQti(MultipleChoiceQuestion question)
         {
             var sb = new StringBuilder();
-            using (var writer = XmlWriter.Create(sb, new XmlWriterSettings { Indent = true, OmitXmlDeclaration = true }))
+            using (var writer =
+                   XmlWriter.Create(sb, new XmlWriterSettings { Indent = true, OmitXmlDeclaration = true }))
             {
                 writer.WriteStartElement("questestinterop", "http://www.imsglobal.org/xsd/ims_qtiasiv1p2");
                 writer.WriteStartElement("item");
@@ -42,6 +43,7 @@ namespace CanvasQuizConverter.Generators
                     writer.WriteEndElement(); // material
                     writer.WriteEndElement(); // response_label
                 }
+
                 writer.WriteEndElement(); // render_choice
                 writer.WriteEndElement(); // response_lid
                 writer.WriteEndElement(); // presentation
@@ -82,16 +84,19 @@ namespace CanvasQuizConverter.Generators
                     writer.WriteEndElement(); // flow_mat
                     writer.WriteEndElement(); // itemfeedback
                 }
+
                 writer.WriteEndElement(); // item
                 writer.WriteEndElement(); // questestinterop
             }
+
             return sb.ToString();
         }
 
         public static string GenerateFreeResponseQti(FreeResponseQuestion question)
         {
             var sb = new StringBuilder();
-            using (var writer = XmlWriter.Create(sb, new XmlWriterSettings { Indent = true, OmitXmlDeclaration = true }))
+            using (var writer =
+                   XmlWriter.Create(sb, new XmlWriterSettings { Indent = true, OmitXmlDeclaration = true }))
             {
                 writer.WriteStartElement("questestinterop", "http://www.imsglobal.org/xsd/ims_qtiasiv1p2");
                 writer.WriteStartElement("item");
@@ -142,13 +147,15 @@ namespace CanvasQuizConverter.Generators
                 writer.WriteEndElement(); // item
                 writer.WriteEndElement(); // questestinterop
             }
+
             return sb.ToString();
         }
 
         public static string GenerateAssessmentQti(string quizTitle, string assessmentIdent, List<string> questionIds)
         {
             var sb = new StringBuilder();
-            using (var writer = XmlWriter.Create(sb, new XmlWriterSettings { Indent = true, OmitXmlDeclaration = true }))
+            using (var writer =
+                   XmlWriter.Create(sb, new XmlWriterSettings { Indent = true, OmitXmlDeclaration = true }))
             {
                 writer.WriteStartElement("questestinterop", "http://www.imsglobal.org/xsd/ims_qtiasiv1p2");
                 writer.WriteStartElement("assessment");
@@ -162,14 +169,17 @@ namespace CanvasQuizConverter.Generators
                     writer.WriteAttributeString("linkrefid", questionId);
                     writer.WriteEndElement();
                 }
+
                 writer.WriteEndElement(); // section
                 writer.WriteEndElement(); // assessment
                 writer.WriteEndElement(); // questestinterop
             }
+
             return sb.ToString();
         }
 
-        public static string GenerateImsManifest(string manifestIdent, string assessmentIdent, List<string> dependencyIdents, Dictionary<string, string> resources)
+        public static string GenerateImsManifest(string manifestIdent, string assessmentIdent,
+            List<string> dependencyIdents, Dictionary<string, string> resources)
         {
             var sb = new StringBuilder();
             using (var writer = XmlWriter.Create(sb, new XmlWriterSettings { Indent = true }))
@@ -178,7 +188,8 @@ namespace CanvasQuizConverter.Generators
                 writer.WriteStartElement("manifest", "http://www.imsglobal.org/xsd/imscp_v1p1");
                 writer.WriteAttributeString("identifier", manifestIdent);
                 writer.WriteAttributeString("xmlns", "xsi", null, "http://www.w3.org/2001/XMLSchema-instance");
-                writer.WriteAttributeString("xsi", "schemaLocation", null, @"http://www.imsglobal.org/xsd/imscp_v1p1 http://www.imsglobal.org/xsd/imscp_v1p1.xsd http://www.imsglobal.org/xsd/ims_qtiasiv1p2 http://www.imsglobal.org/xsd/ims_qtiasiv1p2p1.xsd");
+                writer.WriteAttributeString("xsi", "schemaLocation", null,
+                    @"http://www.imsglobal.org/xsd/imscp_v1p1 http://www.imsglobal.org/xsd/imscp_v1p1.xsd http://www.imsglobal.org/xsd/ims_qtiasiv1p2 http://www.imsglobal.org/xsd/ims_qtiasiv1p2p1.xsd");
 
                 writer.WriteStartElement("organizations");
                 writer.WriteEndElement();
@@ -197,6 +208,7 @@ namespace CanvasQuizConverter.Generators
                     writer.WriteAttributeString("identifierref", dependency);
                     writer.WriteEndElement(); // dependency
                 }
+
                 writer.WriteEndElement(); // resource
 
                 foreach (var resource in resources)
@@ -210,9 +222,11 @@ namespace CanvasQuizConverter.Generators
                     writer.WriteEndElement(); // file
                     writer.WriteEndElement(); // resource
                 }
+
                 writer.WriteEndElement(); // resources
                 writer.WriteEndElement(); // manifest
             }
+
             return sb.ToString();
         }
     }
