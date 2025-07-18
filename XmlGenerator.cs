@@ -1,4 +1,3 @@
-
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -128,17 +127,15 @@ namespace CanvasQuizConverter.Generators
                 if (!string.IsNullOrEmpty(question.ModelAnswer))
                 {
                     writer.WriteStartElement("itemfeedback");
-                    writer.WriteAttributeString("ident", "solution");
-                    writer.WriteStartElement("solution");
-                    writer.WriteStartElement("solutionmaterial");
+                    writer.WriteAttributeString("ident", "general_feedback");
+                    writer.WriteStartElement("flow_mat");
                     writer.WriteStartElement("material");
                     writer.WriteStartElement("mattext");
                     writer.WriteAttributeString("texttype", "text/html");
                     writer.WriteCData(Markdown.ToHtml(question.ModelAnswer));
                     writer.WriteEndElement(); // mattext
                     writer.WriteEndElement(); // material
-                    writer.WriteEndElement(); // solutionmaterial
-                    writer.WriteEndElement(); // solution
+                    writer.WriteEndElement(); // flow_mat
                     writer.WriteEndElement(); // itemfeedback
                 }
 
