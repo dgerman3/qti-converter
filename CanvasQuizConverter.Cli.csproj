@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <OutputType>WinExe</OutputType>
+        <OutputType>Exe</OutputType>
         <TargetFramework>net8.0</TargetFramework>
         <LangVersion>12</LangVersion>
         <ImplicitUsings>enable</ImplicitUsings>
@@ -15,6 +15,12 @@
     <ItemGroup>
         <PackageReference Include="Markdig" Version="0.37.0" />
         <PackageReference Include="JsonSchema.Net" Version="7.0.2" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="quiz-schema.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
 </Project>

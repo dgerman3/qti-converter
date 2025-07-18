@@ -71,8 +71,8 @@ namespace CanvasQuizConverter.Cli
 
             try
             {
-                var jsonContent = await File.ReadAllTextAsync(filePath);
-                var schemaJson = await File.ReadAllTextAsync("quiz-schema.json");
+                var jsonContent = File.ReadAllTextAsync(filePath).Result;
+                var schemaJson =  File.ReadAllTextAsync("quiz-schema.json").Result;
                 var schema = JsonSchema.FromText(schemaJson);
                 var validationResult = schema.Evaluate(JsonDocument.Parse(jsonContent).RootElement, new EvaluationOptions { OutputFormat = OutputFormat.List });
 
@@ -123,14 +123,14 @@ namespace CanvasQuizConverter.Cli
 
                     resourceIdentifiers.Add(questionId, resourceId);
                     dependencyIdentifiers.Add(resourceId);
-                    await AddEntryToZip(archive, $"{resourceId}/{questionId}.xml", qtiXml);
+                     AddEntryToZip(archive, $"{resourceId}/{questionId}.xml", qtiXml);
                 }
 
                 var assessmentXml = XmlGenerator.GenerateAssessmentQti(quiz.QuizTitle, assessmentIdentifier, resourceIdentifiers.Keys.ToList());
-                await AddEntryToZip(archive, $"{assessmentIdentifier}/{assessmentIdentifier}.xml", assessmentXml);
+                 AddEntryToZip(archive, $"{assessmentIdentifier}/{assessmentIdentifier}.xml", assessmentXml);
 
                 var manifestXml = XmlGenerator.GenerateImsManifest(manifestIdentifier, assessmentIdentifier, dependencyIdentifiers, resourceIdentifiers);
-                await AddEntryToZip(archive, "imsmanifest.xml", manifestXml);
+                 AddEntryToZip(archive, "imsmanifest.xml", manifestXml);
 
                 LogSuccess(fileName, $"Generated '{Path.GetFileName(zipPath)}' with {allQuestions.Count} questions.", summary);
             }
@@ -144,11 +144,11 @@ namespace CanvasQuizConverter.Cli
             }
         }
 
-        private static async Task AddEntryToZip(ZipArchive archive, string entryName, string content)
+        private static void AddEntryToZip(ZipArchive archive, string entryName, string content)
         {
             var entry = archive.CreateEntry(entryName, CompressionLevel.Optimal);
-            await using var writer = new StreamWriter(entry.Open(), Encoding.UTF8);
-            await writer.WriteAsync(content);
+             using var writer = new StreamWriter(entry.Open(), Encoding.UTF8);
+             writer.Write(content);
         }
 
         private static void LogSuccess(string fileName, string message, ICollection<string> summary)
