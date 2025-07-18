@@ -147,8 +147,9 @@ namespace CanvasQuizConverter.Cli
         private static void AddEntryToZip(ZipArchive archive, string entryName, string content)
         {
             var entry = archive.CreateEntry(entryName, CompressionLevel.Optimal);
-             using var writer = new StreamWriter(entry.Open(), Encoding.UTF8);
-             writer.Write(content);
+            using var writer = new StreamWriter(entry.Open(), Encoding.UTF8);
+            writer.Write(content);
+            writer.Flush();
         }
 
         private static void LogSuccess(string fileName, string message, ICollection<string> summary)
